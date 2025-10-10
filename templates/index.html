@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Loan Application</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --gray: #95a5a6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        header h1 {
+            color: var(--primary);
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        header h1::before {
+            content: "🏦";
+            font-size: 3rem;
+        }
+        
+        header p {
+            color: var(--gray);
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .stats {
+            display: inline-flex;
+            gap: 20px;
+            background: var(--light);
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .form-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--light);
+            z-index: 1;
+        }
+        
+        .progress-step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            flex: 1;
+        }
+        
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--light);
+            color: var(--dark);
+            border-radius: 50%;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: 3px solid white;
+            transition: all 0.3s ease;
+        }
+        
+        .step-label {
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-step.active .step-number {
+            background: var(--secondary);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .progress-step.active .step-label {
+            color: var(--secondary);
+            font-weight: 700;
+        }
+        
+        .form-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-title {
+            color: var(--primary);
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 15px;
+            margin: 30px 0 25px;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title::before {
+            font-size: 1.8rem;
+        }
+        
+        .personal-title::before { content: "👤"; }
+        .employment-title::before { content: "💼"; }
+        .loan-title::before { content: "💰"; }
+        .documents-title::before { content: "📎"; }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+        
+        .required::after {
+            content: " *";
+            color: var(--accent);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .document-group {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .password-group {
+            margin-top: 15px;
+        }
+        
+        .password-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .password-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .password-group input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .file-upload {
+            border: 3px dashed #ddd;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+        
+        .file-upload:hover {
+            border-color: var(--secondary);
+            background: #f8f9fa;
+        }
+        
+        .file-upload.drag-over {
+            border-color: var(--success);
+            background: #f0fff4;
+        }
+        
+        .file-upload input {
+            display: none;
+        }
+        
+        .file-upload label {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .file-upload label:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .file-name {
+            margin-top: 15px;
+            font-size: 14px;
+            color: var(--gray);
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e1e8ed;
+        }
+        
+        .file-size {
+            color: var(--success);
+            font-weight: 600;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .btn-prev {
+            background: var(--gray);
+        }
+        
+        .btn-prev:hover {
+            background: #7f8c8d;
+        }
+        
+        .btn-submit {
+            background: var(--success);
+            font-size: 1.1rem;
+            padding: 18px 36px;
+        }
+        
+        .btn-submit:hover {
+            background: #219653;
+        }
+        
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid var(--light);
+        }
+        
+        .form-note {
+            background: #fff9e6;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 0.9rem;
+            color: #e67e22;
+        }
+        
+        .form-note strong {
+            color: #d35400;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .flash-messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 400px;
+        }
+        
+        .flash {
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s ease;
+        }
+        
+        .flash.success {
+            background: var(--success);
+        }
+        
+        .flash.error {
+            background: var(--accent);
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header {
+                padding: 20px;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            
+            .progress-bar {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .progress-bar::before {
+                display: none;
+            }
+            
+            .progress-step {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                text-align: left;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Flash Messages -->
+    <div class="flash-messages" id="flashMessages"></div>
+
+    <div class="container">
+        <header>
+            <h1>Bank Loan Application</h1>
+            <p>Complete the form below to apply for your personal loan</p>
+            <div class="stats">
+                <span>🏦 Secure Application</span>
+                <span>⚡ Quick Processing</span>
+                <span>🔒 Data Protected</span>
+            </div>
+        </header>
+
+        <form id="loanForm" enctype="multipart/form-data">
+            <div class="form-container">
+                <!-- Progress Bar -->
+                <div class="progress-bar">
+                    <div class="progress-step active">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Personal Info</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Employment</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Loan Details</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="step-number">4</div>
+                        <div class="step-label">Documents</div>
+                    </div>
+                </div>
+
+                <!-- Personal Information Section -->
+                <div class="form-section active" id="section1">
+                    <h2 class="section-title personal-title">Personal Information</h2>
+                    
+                    <div class="form-note">
+                        <strong>Note:</strong> All fields marked with * are required. Please provide accurate information.
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name" class="required">Full Name</label>
+                            <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="dob" class="required">Date of Birth</label>
+                            <input type="date" id="dob" name="dob" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone" class="required">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" required placeholder="+91 9876543210">
+                        </div>
+                        <div class="form-group">
+                            <label for="alt_phone">Alternative Phone Number</label>
+                            <input type="tel" id="alt_phone" name="alt_phone" placeholder="Optional alternative number">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="mother_name" class="required">Mother's Name</label>
+                            <input type="text" id="mother_name" name="mother_name" required placeholder="Enter mother's full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="qualification" class="required">Qualification</label>
+                            <input type="text" id="qualification" name="qualification" required placeholder="Highest qualification">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="required">Personal Email ID</label>
+                        <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="present_address" class="required">Present Address</label>
+                        <textarea id="present_address" name="present_address" rows="3" required placeholder="Your current residential address"></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="present_years" class="required">No. of Years in Residence</label>
+                            <input type="number" id="present_years" name="present_years" min="0" step="0.1" required placeholder="2.5">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="permanent_address" class="required">Permanent Address</label>
+                        <textarea id="permanent_address" name="permanent_address" rows="3" required placeholder="Your permanent address"></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="permanent_years" class="required">No. of Years in Permanent Address</label>
+                            <input type="number" id="permanent_years" name="permanent_years" min="0" step="0.1" required placeholder="5.0">
+                        </div>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <div></div>
+                        <button type="button" class="btn btn-next" data-next="2">Next Step →</button>
+                    </div>
+                </div>
+
+                <!-- Employment Information Section -->
+                <div class="form-section" id="section2">
+                    <h2 class="section-title employment-title">Employment Information</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="total_experience" class="required">Total Work Experience (Years)</label>
+                            <input type="number" id="total_experience" name="total_experience" min="0" step="0.1" required placeholder="5.5">
+                        </div>
+                        <div class="form-group">
+                            <label for="company_experience" class="required">Present Company Experience (Years)</label>
+                            <input type="number" id="company_experience" name="company_experience" min="0" step="0.1" required placeholder="2.0">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="company_name" class="required">Company Name</label>
+                        <input type="text" id="company_name" name="company_name" required placeholder="Your current company name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="company_address" class="required">Company Address</label>
+                        <textarea id="company_address" name="company_address" rows="3" required placeholder="Complete company address"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="landmark">Landmark</label>
+                        <input type="text" id="landmark" name="landmark" placeholder="Nearby landmark (optional)">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="designation" class="required">Designation</label>
+                            <input type="text" id="designation" name="designation" required placeholder="Your job title">
+                        </div>
+                        <div class="form-group">
+                            <label for="office_contact" class="required">Office Contact Number</label>
+                            <input type="tel" id="office_contact" name="office_contact" required placeholder="Office phone number">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="official_email" class="required">Official Email ID</label>
+                        <input type="email" id="official_email" name="official_email" required placeholder="your.name@company.com">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bank_name" class="required">Salary Account Bank Name</label>
+                            <input type="text" id="bank_name" name="bank_name" required placeholder="e.g., SBI, HDFC, ICICI">
+                        </div>
+                        <div class="form-group">
+                            <label for="bank_years" class="required">Years of Account Opening</label>
+                            <input type="number" id="bank_years" name="bank_years" min="0" step="0.1" required placeholder="3.0">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="branch" class="required">Branch</label>
+                        <input type="text" id="branch" name="branch" required placeholder="Bank branch name">
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-prev" data-prev="1">← Previous</button>
+                        <button type="button" class="btn btn-next" data-next="3">Next Step →</button>
+                    </div>
+                </div>
+
+                <!-- Loan Details Section -->
+                <div class="form-section" id="section3">
+                    <h2 class="section-title loan-title">Loan Details</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="loan_amount" class="required">Loan Amount (₹)</label>
+                            <input type="number" id="loan_amount" name="loan_amount" min="0" required placeholder="500000">
+                        </div>
+                        <div class="form-group">
+                            <label for="tenure" class="required">Tenure (Months)</label>
+                            <input type="number" id="tenure" name="tenure" min="1" required placeholder="36">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="existing_loan">Existing Loan Details</label>
+                        <textarea id="existing_loan" name="existing_loan" rows="3" placeholder="Details of any existing loans (if any)"></textarea>
+                    </div>
+                    
+                    <h3 class="section-title">References</h3>
+                    
+                    <div class="form-group">
+                        <label for="friend_name" class="required">Friend Name</label>
+                        <input type="text" id="friend_name" name="friend_name" required placeholder="Friend's full name">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="friend_contact" class="required">Friend Contact Number</label>
+                            <input type="tel" id="friend_contact" name="friend_contact" required placeholder="Friend's phone number">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="friend_address" class="required">Friend Address</label>
+                        <textarea id="friend_address" name="friend_address" rows="3" required placeholder="Friend's complete address"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="relative_name" class="required">Relative Name</label>
+                        <input type="text" id="relative_name" name="relative_name" required placeholder="Relative's full name">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="relative_contact" class="required">Relative Contact Number</label>
+                            <input type="tel" id="relative_contact" name="relative_contact" required placeholder="Relative's phone number">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="relative_address" class="required">Relative Address</label>
+                        <textarea id="relative_address" name="relative_address" rows="3" required placeholder="Relative's complete address"></textarea>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-prev" data-prev="2">← Previous</button>
+                        <button type="button" class="btn btn-next" data-next="4">Next Step →</button>
+                    </div>
+                </div>
+
+                <!-- Documents Section -->
+                <div class="form-section" id="section4">
+                    <h2 class="section-title documents-title">Upload Documents</h2>
+                    
+                    <div class="form-note">
+                        <strong>Important:</strong> 
+                        <br>• Please upload all documents in PDF format only. 
+                        <br>• Maximum file size: 10MB per document.
+                        <br>• If your PDF is password protected, enter the password below. Otherwise, enter "No password".
+                    </div>
+                    
+                    <!-- Aadhar Card -->
+                    <div class="document-group">
+                        <div class="file-upload" id="aadharUpload">
+                            <label for="aadhar">
+                                📄 Upload Aadhar Card (PDF)
+                            </label>
+                            <input type="file" id="aadhar" name="aadhar" accept=".pdf" required>
+                            <div class="file-name">No file chosen</div>
+                        </div>
+                        <div class="password-group">
+                            <label for="aadhar_password" class="required">PDF Password</label>
+                            <input type="text" id="aadhar_password" name="aadhar_password" 
+                                   placeholder='Enter password or "No password"' required>
+                        </div>
+                    </div>
+                    
+                    <!-- PAN Card -->
+                    <div class="document-group">
+                        <div class="file-upload" id="panUpload">
+                            <label for="pan">
+                                📄 Upload PAN Card (PDF)
+                            </label>
+                            <input type="file" id="pan" name="pan" accept=".pdf" required>
+                            <div class="file-name">No file chosen</div>
+                        </div>
+                        <div class="password-group">
+                            <label for="pan_password" class="required">PDF Password</label>
+                            <input type="text" id="pan_password" name="pan_password" 
+                                   placeholder='Enter password or "No password"' required>
+                        </div>
+                    </div>
+                    
+                    <!-- Salary Slips -->
+                    <div class="document-group">
+                        <div class="file-upload" id="salarySlipsUpload">
+                            <label for="salary_slips">
+                                📄 Upload Last 3 Months Salary Slips (PDF)
+                            </label>
+                            <input type="file" id="salary_slips" name="salary_slips" accept=".pdf" required>
+                            <div class="file-name">No file chosen</div>
+                        </div>
+                        <div class="password-group">
+                            <label for="salary_slips_password" class="required">PDF Password</label>
+                            <input type="text" id="salary_slips_password" name="salary_slips_password" 
+                                   placeholder='Enter password or "No password"' required>
+                        </div>
+                    </div>
+                    
+                    <!-- Bank Statement -->
+                    <div class="document-group">
+                        <div class="file-upload" id="bankStatementUpload">
+                            <label for="bank_statement">
+                                📄 Upload 4 Months Bank Statement (PDF)
+                            </label>
+                            <input type="file" id="bank_statement" name="bank_statement" accept=".pdf" required>
+                            <div class="file-name">No file chosen</div>
+                        </div>
+                        <div class="password-group">
+                            <label for="bank_statement_password" class="required">PDF Password</label>
+                            <input type="text" id="bank_statement_password" name="bank_statement_password" 
+                                   placeholder='Enter password or "No password"' required>
+                        </div>
+                    </div>
+                    
+                    <!-- Offer Letter -->
+                    <div class="document-group">
+                        <div class="file-upload" id="offerLetterUpload">
+                            <label for="offer_letter">
+                                📄 Upload Offer Letter of Present Company (PDF)
+                            </label>
+                            <input type="file" id="offer_letter" name="offer_letter" accept=".pdf" required>
+                            <div class="file-name">No file chosen</div>
+                        </div>
+                        <div class="password-group">
+                            <label for="offer_letter_password" class="required">PDF Password</label>
+                            <input type="text" id="offer_letter_password" name="offer_letter_password" 
+                                   placeholder='Enter password or "No password"' required>
+                        </div>
+                    </div>
+                    
+                    <!-- Relieving Letter -->
+                    <div class="document-group">
+                        <div class="file-upload" id="relievingLetterUpload">
+                            <label for="relieving_letter">
+                                📄 Upload Relieving Letter of Previous Company (PDF)
+                            </label>
+                            <input type="file" id="relieving_letter" name="relieving_letter" accept=".pdf" required>
+                            <div class="file-name">No file chosen</div>
+                        </div>
+                        <div class="password-group">
+                            <label for="relieving_letter_password" class="required">PDF Password</label>
+                            <input type="text" id="relieving_letter_password" name="relieving_letter_password" 
+                                   placeholder='Enter password or "No password"' required>
+                        </div>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-prev" data-prev="3">← Previous</button>
+                        <button type="submit" class="btn btn-submit">
+                            <span id="submitText">Submit Application</span>
+                            <div class="loading" id="submitLoading" style="display: none;"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        
+        <footer>
+            <p>&copy; 2024 Bank Loan Application System. All rights reserved.</p>
+            <p>Your data is secure and protected with 256-bit encryption</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Form navigation
+            const nextButtons = document.querySelectorAll('.btn-next');
+            const prevButtons = document.querySelectorAll('.btn-prev');
+            const formSections = document.querySelectorAll('.form-section');
+            const progressSteps = document.querySelectorAll('.progress-step');
+            const form = document.getElementById('loanForm');
+            
+            nextButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const currentSection = this.closest('.form-section');
+                    const nextSectionId = this.getAttribute('data-next');
+                    
+                    // Validate current section before proceeding
+                    if (validateSection(currentSection.id)) {
+                        currentSection.classList.remove('active');
+                        document.getElementById(`section${nextSectionId}`).classList.add('active');
+                        updateProgressBar(nextSectionId);
+                    }
+                });
+            });
+            
+            prevButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const currentSection = this.closest('.form-section');
+                    const prevSectionId = this.getAttribute('data-prev');
+                    
+                    currentSection.classList.remove('active');
+                    document.getElementById(`section${prevSectionId}`).classList.add('active');
+                    updateProgressBar(prevSectionId);
+                });
+            });
+            
+            function updateProgressBar(activeStep) {
+                progressSteps.forEach((step, index) => {
+                    if (index < activeStep) {
+                        step.classList.add('active');
+                    } else {
+                        step.classList.remove('active');
+                    }
+                });
+            }
+            
+            function validateSection(sectionId) {
+                const section = document.getElementById(sectionId);
+                const requiredFields = section.querySelectorAll('[required]');
+                let isValid = true;
+                
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        field.style.borderColor = 'var(--accent)';
+                        showFlash('Please fill all required fields', 'error');
+                    } else {
+                        field.style.borderColor = '';
+                    }
+                });
+                
+                return isValid;
+            }
+            
+            // File upload display
+            const fileInputs = document.querySelectorAll('input[type="file"]');
+            fileInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (file) {
+                        const fileName = file.name;
+                        const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+                        const fileNameElement = this.parentElement.querySelector('.file-name');
+                        
+                        if (file.type !== 'application/pdf') {
+                            showFlash('Please upload PDF files only', 'error');
+                            this.value = '';
+                            fileNameElement.textContent = 'No file chosen';
+                            return;
+                        }
+                        
+                        if (file.size > 10 * 1024 * 1024) {
+                            showFlash('File size must be less than 10MB', 'error');
+                            this.value = '';
+                            fileNameElement.textContent = 'No file chosen';
+                            return;
+                        }
+                        
+                        fileNameElement.innerHTML = `
+                            ✅ ${fileName} 
+                            <span class="file-size">(${fileSize} MB)</span>
+                        `;
+                    }
+                });
+            });
+            
+            // Drag and drop functionality
+            const fileUploads = document.querySelectorAll('.file-upload');
+            fileUploads.forEach(upload => {
+                upload.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    this.classList.add('drag-over');
+                });
+                
+                upload.addEventListener('dragleave', function() {
+                    this.classList.remove('drag-over');
+                });
+                
+                upload.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('drag-over');
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        const input = this.querySelector('input[type="file"]');
+                        input.files = files;
+                        input.dispatchEvent(new Event('change'));
+                    }
+                });
+            });
+            
+            // Form submission
+            const submitText = document.getElementById('submitText');
+            const submitLoading = document.getElementById('submitLoading');
+            
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Validate all sections
+                let allValid = true;
+                formSections.forEach(section => {
+                    if (!validateSection(section.id)) {
+                        allValid = false;
+                    }
+                });
+                
+                if (!allValid) {
+                    showFlash('Please fill all required fields before submitting', 'error');
+                    return;
+                }
+                
+                // Show loading state
+                submitText.textContent = 'Submitting...';
+                submitLoading.style.display = 'inline-block';
+                
+                try {
+                    // Create FormData object
+                    const formData = new FormData(form);
+                    
+                    // Send data to server
+                    const response = await fetch('/apply', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showFlash(`✅ ${result.message} Your Application ID: ${result.application_id}`, 'success');
+                        
+                        // Clear the form completely
+                        clearForm();
+                        
+                        // Reset to first section
+                        formSections.forEach(section => section.classList.remove('active'));
+                        document.getElementById('section1').classList.add('active');
+                        updateProgressBar(1);
+                        
+                    } else {
+                        showFlash(`❌ ${result.error}`, 'error');
+                    }
+                    
+                } catch (error) {
+                    console.error('Submission error:', error);
+                    showFlash('❌ Error submitting application. Please try again.', 'error');
+                } finally {
+                    // Reset button state
+                    submitText.textContent = 'Submit Application';
+                    submitLoading.style.display = 'none';
+                }
+            });
+            
+            // Function to completely clear the form
+            function clearForm() {
+                // Clear all input fields
+                const inputs = form.querySelectorAll('input, textarea, select');
+                inputs.forEach(input => {
+                    if (input.type === 'file') {
+                        // For file inputs, we need to clear them differently
+                        input.value = '';
+                        const fileNameElement = input.parentElement.querySelector('.file-name');
+                        if (fileNameElement) {
+                            fileNameElement.textContent = 'No file chosen';
+                        }
+                    } else if (input.type === 'checkbox' || input.type === 'radio') {
+                        input.checked = false;
+                    } else {
+                        input.value = '';
+                    }
+                    
+                    // Remove any error styles
+                    input.style.borderColor = '';
+                });
+                
+                // Clear any custom styles
+                const fileUploads = form.querySelectorAll('.file-upload');
+                fileUploads.forEach(upload => {
+                    upload.classList.remove('drag-over');
+                });
+                
+                console.log('Form cleared successfully');
+            }
+            
+            // Flash message function
+            function showFlash(message, type) {
+                const flashMessages = document.getElementById('flashMessages');
+                const flash = document.createElement('div');
+                flash.className = `flash ${type}`;
+                flash.textContent = message;
+                
+                flashMessages.appendChild(flash);
+                
+                // Remove flash after 5 seconds
+                setTimeout(() => {
+                    flash.remove();
+                }, 5000);
+            }
+            
+            // Auto-hide flash messages on click
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('flash')) {
+                    e.target.remove();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

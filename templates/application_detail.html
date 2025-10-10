@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Details - ID: {{ application.id }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header h1::before {
+            content: "📋";
+            font-size: 2.5rem;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-back {
+            background: #7f8c8d;
+        }
+        
+        .btn-back:hover {
+            background: #6c7b7d;
+        }
+        
+        .btn-new {
+            background: #27ae60;
+        }
+        
+        .btn-new:hover {
+            background: #219653;
+        }
+        
+        .application-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .info-value {
+            color: #555;
+            font-size: 1rem;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e1e8ed;
+        }
+        
+        .section {
+            background: white;
+            border: 1px solid #e1e8ed;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease;
+        }
+        
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section h3 {
+            color: #2c3e50;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .field {
+            margin-bottom: 15px;
+        }
+        
+        .field label {
+            font-weight: 600;
+            color: #555;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .field-value {
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e1e8ed;
+            color: #2c3e50;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        
+        .files-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .files-section h3 {
+            color: white;
+            border-bottom-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .files-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .file-item {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .file-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .file-type {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .file-type::before {
+            content: "📎";
+            font-size: 1.2rem;
+        }
+        
+        .file-password {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin-top: 8px;
+            font-family: monospace;
+        }
+        
+        .loan-amount {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-pending {
+            background: #f39c12;
+        }
+        
+        .status-approved {
+            background: #27ae60;
+        }
+        
+        .section-icon::before {
+            font-size: 1.6rem;
+        }
+        
+        .personal::before { content: "👤"; }
+        .address::before { content: "🏠"; }
+        .employment::before { content: "💼"; }
+        .bank::before { content: "🏦"; }
+        .loan::before { content: "💰"; }
+        .references::before { content: "📞"; }
+        .documents::before { content: "📎"; }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn {
+                justify-content: center;
+            }
+            
+            .section-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <h1>Application Details - ID: {{ application.id }}</h1>
+            <div class="btn-group">
+                <a href="/admin/applications" class="btn btn-back">
+                    ← Back to Applications
+                </a>
+                <a href="/" class="btn btn-new">
+                    ＋ New Application
+                </a>
+            </div>
+        </div>
+
+        <!-- Application Info -->
+        <div class="application-info">
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Application ID</span>
+                    <span class="info-value">#{{ application.id }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Submission Date</span>
+                    <span class="info-value">{{ application.submission_date }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Status</span>
+                    <span class="info-value">
+                        <span class="status-badge status-pending">Under Review</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Personal Information -->
+        <div class="section">
+            <h3 class="section-icon personal">Personal Information</h3>
+            <div class="section-grid">
+                <div class="field">
+                    <label>Full Name</label>
+                    <div class="field-value">{{ application.name }}</div>
+                </div>
+                <div class="field">
+                    <label>Date of Birth</label>
+                    <div class="field-value">{{ application.dob }}</div>
+                </div>
+                <div class="field">
+                    <label>Phone Number</label>
+                    <div class="field-value">{{ application.phone }}</div>
+                </div>
+                <div class="field">
+                    <label>Alternative Phone</label>
+                    <div class="field-value">{{ application.alt_phone or 'Not Provided' }}</div>
+                </div>
+                <div class="field">
+                    <label>Email Address</label>
+                    <div class="field-value">{{ application.email }}</div>
+                </div>
+                <div class="field">
+                    <label>Mother's Name</label>
+                    <div class="field-value">{{ application.mother_name }}</div>
+                </div>
+                <div class="field">
+                    <label>Qualification</label>
+                    <div class="field-value">{{ application.qualification }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Address Details -->
+        <div class="section">
+            <h3 class="section-icon address">Address Details</h3>
+            <div class="section-grid">
+                <div class="field" style="grid-column: 1 / -1;">
+                    <label>Present Address</label>
+                    <div class="field-value">{{ application.present_address }}</div>
+                </div>
+                <div class="field">
+                    <label>Years at Present Address</label>
+                    <div class="field-value">{{ application.present_years }} years</div>
+                </div>
+                <div class="field" style="grid-column: 1 / -1;">
+                    <label>Permanent Address</label>
+                    <div class="field-value">{{ application.permanent_address }}</div>
+                </div>
+                <div class="field">
+                    <label>Years at Permanent Address</label>
+                    <div class="field-value">{{ application.permanent_years }} years</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employment Information -->
+        <div class="section">
+            <h3 class="section-icon employment">Employment Information</h3>
+            <div class="section-grid">
+                <div class="field">
+                    <label>Company Name</label>
+                    <div class="field-value">{{ application.company_name }}</div>
+                </div>
+                <div class="field">
+                    <label>Designation</label>
+                    <div class="field-value">{{ application.designation }}</div>
+                </div>
+                <div class="field">
+                    <label>Office Contact</label>
+                    <div class="field-value">{{ application.office_contact }}</div>
+                </div>
+                <div class="field">
+                    <label>Official Email</label>
+                    <div class="field-value">{{ application.official_email }}</div>
+                </div>
+                <div class="field" style="grid-column: 1 / -1;">
+                    <label>Company Address</label>
+                    <div class="field-value">{{ application.company_address }}</div>
+                </div>
+                <div class="field">
+                    <label>Landmark</label>
+                    <div class="field-value">{{ application.landmark or 'Not Provided' }}</div>
+                </div>
+                <div class="field">
+                    <label>Total Experience</label>
+                    <div class="field-value">{{ application.total_experience }} years</div>
+                </div>
+                <div class="field">
+                    <label>Current Company Experience</label>
+                    <div class="field-value">{{ application.company_experience }} years</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bank Details -->
+        <div class="section">
+            <h3 class="section-icon bank">Bank Details</h3>
+            <div class="section-grid">
+                <div class="field">
+                    <label>Bank Name</label>
+                    <div class="field-value">{{ application.bank_name }}</div>
+                </div>
+                <div class="field">
+                    <label>Account Years</label>
+                    <div class="field-value">{{ application.bank_years }} years</div>
+                </div>
+                <div class="field">
+                    <label>Branch</label>
+                    <div class="field-value">{{ application.branch }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loan Details -->
+        <div class="section">
+            <h3 class="section-icon loan">Loan Details</h3>
+            <div class="section-grid">
+                <div class="field" style="grid-column: 1 / -1;">
+                    <label>Loan Amount</label>
+                    <div class="loan-amount">
+                        ₹{{ "{:,.2f}".format(application.loan_amount) }}
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Tenure</label>
+                    <div class="field-value">{{ application.tenure }} months</div>
+                </div>
+                <div class="field" style="grid-column: 1 / -1;">
+                    <label>Existing Loan Details</label>
+                    <div class="field-value">{{ application.existing_loan or 'No existing loans' }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- References -->
+        <div class="section">
+            <h3 class="section-icon references">References</h3>
+            <div class="section-grid">
+                <div class="field">
+                    <label>Friend Reference</label>
+                    <div class="field-value">
+                        <strong>{{ application.friend_name }}</strong><br>
+                        📞 {{ application.friend_contact }}<br>
+                        📍 {{ application.friend_address }}
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Relative Reference</label>
+                    <div class="field-value">
+                        <strong>{{ application.relative_name }}</strong><br>
+                        📞 {{ application.relative_contact }}<br>
+                        📍 {{ application.relative_address }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Uploaded Documents -->
+        {% if files %}
+        <div class="section files-section">
+            <h3 class="section-icon documents">Uploaded Documents with Passwords</h3>
+            <ul class="files-list">
+                {% for file in files %}
+                <li class="file-item">
+                    <div class="file-type">
+                        <strong>{{ file.file_type }}</strong>
+                    </div>
+                    <div class="file-path">{{ file.file_path.split('/')[-1] }}</div>
+                    <div class="file-password">
+                        <strong>Password:</strong> {{ file.file_password }}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% else %}
+        <div class="section">
+            <h3 class="section-icon documents">Uploaded Documents</h3>
+            <div class="field-value" style="text-align: center; padding: 30px; color: #7f8c8d;">
+                📁 No documents uploaded
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 15px; justify-content: center; margin-top: 40px; padding-top: 20px; border-top: 2px solid #ecf0f1;">
+            <a href="/admin/applications" class="btn btn-back">
+                ← Back to Applications
+            </a>
+            <a href="/" class="btn btn-new">
+                ＋ Submit New Application
+            </a>
+        </div>
+    </div>
+</body>
+</html>

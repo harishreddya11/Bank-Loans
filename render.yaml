@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: bank-loan-application
+    env: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn app:app"
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.9.18"
